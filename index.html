@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinévia | Pesquisa de Filmes e Séries</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.png" type="image/png" sizes="256x256">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <a href="#" class="brand" onclick="loadHome()">
+            <div class="brand-icon-wrapper">
+                <i class="fa-solid fa-film brand-icon-3d"></i>
+            </div>
+            <span class="brand-name">Cinévia</span>
+        </a>
+
+        <nav class="nav-menu">
+            <div class="nav-title">Navegação</div>
+            <a class="nav-link active" id="navHome" onclick="loadHome()"><i class="fa-solid fa-house"></i> Home</a>
+            <a class="nav-link" id="navTrending" onclick="loadTrending()"><i class="fa-solid fa-fire"></i> Em Alta</a>
+            <a class="nav-link" id="navCategories" onclick="toggleCategoriesView()"><i class="fa-solid fa-layer-group"></i> Categorias</a>
+            <a class="nav-link" id="navMyList" onclick="loadMyList()"><i class="fa-solid fa-heart"></i> Minha Lista <span id="myListCount" style="margin-left:auto;color:var(--text-muted);font-size:0.75rem;"></span></a>
+            <a class="nav-link" id="navRecommendations" onclick="loadRecommendations()"><i class="fa-solid fa-wand-magic-sparkles"></i> Recomendados</a>
+            <a class="nav-link" id="navSurprise" onclick="surpriseMe()"><i class="fa-solid fa-dice"></i> Surpreenda-me</a>
+
+            <div class="nav-title">Sistema</div>
+            <a class="nav-link" id="navSettings" onclick="openSettingsModal()"><i class="fa-solid fa-gear"></i> Configurações</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <!-- HEADER / CARROSSEL IMDB STYLE -->
+        <header class="hero" id="heroCarouselContainer">
+            <div class="hero-fallback">
+                <div class="spinner" style="margin-bottom: 20px;"></div>
+                <h1 style="font-family: var(--font-title); color: white;">Carregando Destaques...</h1>
+            </div>
+        </header>
+
+        <section class="search-container">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Buscar filmes, séries ou animes..." autocomplete="off">
+            </div>
+            <button class="feature-btn filter-toggle" id="filterToggleBtn" onclick="toggleFilters()"><i class="fa-solid fa-sliders"></i> Filtros</button>
+
+            <div class="filter-panel" id="filterPanel">
+                <div class="filter-grid">
+                    <div class="filter-field">
+                        <label for="filterType">Tipo</label>
+                        <select id="filterType" onchange="refreshFilterGenreOptions()">
+                            <option value="all">Filmes + Séries</option>
+                            <option value="movie">Filmes</option>
+                            <option value="tv">Séries</option>
+                        </select>
+                    </div>
+                    <div class="filter-field">
+                        <label for="filterGenre">Gênero</label>
+                        <select id="filterGenre">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                    <div class="filter-field">
+                        <label for="filterFromYear">Ano inicial</label>
+                        <input id="filterFromYear" type="number" min="1900" max="2100" placeholder="Ex.: 2010">
+                    </div>
+                    <div class="filter-field">
+                        <label for="filterToYear">Ano final</label>
+                        <input id="filterToYear" type="number" min="1900" max="2100" placeholder="Ex.: 2026">
+                    </div>
+                    <div class="filter-field">
+                        <label for="filterRating">Nota mínima</label>
+                        <select id="filterRating">
+                            <option value="">Qualquer</option>
+                            <option value="6">6.0+</option>
+                            <option value="7">7.0+</option>
+                            <option value="7.5">7.5+</option>
+                            <option value="8">8.0+</option>
+                            <option value="8.5">8.5+</option>
+                            <option value="9">9.0+</option>
+                        </select>
+                    </div>
+                    <div class="filter-field">
+                        <label for="filterLanguage">Idioma original</label>
+                        <select id="filterLanguage">
+                            <option value="">Todos</option>
+                            <option value="en">Inglês</option>
+                            <option value="ja">Japonês</option>
+                            <option value="ko">Coreano</option>
+                            <option value="es">Espanhol</option>
+                            <option value="fr">Francês</option>
+                            <option value="de">Alemão</option>
+                            <option value="it">Italiano</option>
+                            <option value="pt">Português</option>
+                        </select>
+                    </div>
+                    <div class="filter-field">
+                        <label for="filterSort">Ordenar por</label>
+                        <select id="filterSort">
+                            <option value="popularity.desc">Popularidade</option>
+                            <option value="vote_average.desc">Melhor avaliação</option>
+                            <option value="vote_count.desc">Mais avaliados</option>
+                            <option value="primary_release_date.desc">Mais recentes</option>
+                        </select>
+                    </div>
+                    <div class="filter-field">
+                        <label for="filterVotes">Votos mínimos</label>
+                        <select id="filterVotes">
+                            <option value="">Qualquer</option>
+                            <option value="100">100+</option>
+                            <option value="500">500+</option>
+                            <option value="1000">1.000+</option>
+                            <option value="5000">5.000+</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button class="feature-btn filter-apply" onclick="applyFilters()"><i class="fa-solid fa-check"></i> Aplicar filtros</button>
+                    <button class="feature-btn filter-reset" onclick="resetFilters()"><i class="fa-solid fa-rotate-left"></i> Limpar</button>
+                </div>
+            </div>
+
+            <div class="categories-bar" id="categoriesBar">
+                <button class="cat-btn active" onclick="filterByCategory('all', event)">Todos</button>
+                <button class="cat-btn" onclick="filterByCategory(28, event)">Ação</button>
+                <button class="cat-btn" onclick="filterByCategory(16, event)">Animes/Animação</button>
+                <button class="cat-btn" onclick="filterByCategory(35, event)">Comédia</button>
+                <button class="cat-btn" onclick="filterByCategory(18, event)">Drama</button>
+                <button class="cat-btn" onclick="filterByCategory(14, event)">Fantasia</button>
+                <button class="cat-btn" onclick="filterByCategory(878, event)">Ficção Científica</button>
+            </div>
+        </section>
+
+        <section class="results-section">
+            <h2 class="section-title" id="sectionTitle">Lançamentos Populares</h2>
+            <div class="grid-container" id="resultsGrid"></div>
+
+            <div class="pagination" id="paginationContainer" style="display: none;">
+                <button class="page-btn" id="prevPage" onclick="changePage(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                <span class="page-info" id="pageInfo">Página 1</span>
+                <button class="page-btn" id="nextPage" onclick="changePage(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL DE DETALHES -->
+    <div class="modal-overlay" id="detailsModal" onclick="closeModal(event)">
+        <div class="modal-content" id="modalContent">
+            <!-- Conteúdo será injetado aqui via JS -->
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIGURAÇÕES -->
+    <div class="modal-overlay" id="settingsModal" onclick="closeModal(event)">
+        <div class="modal-content settings-modal-content" style="max-width: 520px; flex-direction: column; padding: 2rem;">
+            <button class="modal-close" onclick="forceCloseModal()"><i class="fa-solid fa-xmark"></i></button>
+            <h2 style="font-family: var(--font-title); margin-bottom: 1rem;">Configurações</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Gerencie a chave da API e personalize a visualização do catálogo.</p>
+
+            <div class="settings-form">
+                <div class="settings-field">
+                    <label for="apiKeyInput">TMDB API Key</label>
+                    <input type="text" id="apiKeyInput" placeholder="Ex: d4b2f..." autocomplete="off">
+                </div>
+                <div class="settings-field">
+                    <label for="apiSecurityCode">Código de segurança para alterar a API</label>
+                    <input type="password" id="apiSecurityCode" placeholder="Digite o código de segurança" autocomplete="current-password">
+                    <small class="settings-help">O código é exigido sempre que você salvar a chave da API.</small>
+                </div>
+                <button class="save-btn" onclick="saveSettings()">Autorizar e salvar API Key</button>
+                <p id="settingsMsg" class="settings-message" role="status" aria-live="polite" style="display: none;"></p>
+
+                <div class="settings-divider"></div>
+
+                <div class="settings-section-heading">
+                    <h3>Personalização do catálogo</h3>
+                    <p>Escolha manualmente como os filmes e séries aparecem. O visual atual continua sendo o padrão.</p>
+                </div>
+                <div class="settings-field">
+                    <label for="visualStyleSelect">Design de visualização</label>
+                    <select id="visualStyleSelect">
+                        <option value="classic">Visual atual do Cinévia</option>
+                        <option value="netflix">Netflix Look — desktop</option>
+                    </select>
+                </div>
+                <button class="save-btn visual-style-btn" onclick="applyVisualizationStyle()">Aplicar visualização</button>
+                <p id="visualStyleMsg" class="settings-message" role="status" aria-live="polite" style="display: none;"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="trailer-overlay" id="trailerOverlay" onclick="closeTrailer(event)">
+        <div class="trailer-window" id="trailerWindow">
+            <div class="trailer-header">
+                <div class="trailer-title" id="trailerTitle">Trailer</div>
+                <button class="trailer-close" onclick="closeTrailer()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="trailer-frame-wrap" id="trailerFrameWrap">
+                <div class="trailer-message">Carregando trailer...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

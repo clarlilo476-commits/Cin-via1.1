@@ -1,0 +1,19 @@
+CINÉVIA — FAVICON INTEGRADO
+
+O que foi alterado:
+- Apenas o index.html recebeu referências ao favicon.ico e favicon.png.
+- script.js e style.css foram mantidos sem alterações.
+- Os arquivos do favicon foram renomeados para nomes convencionais e mantidos na mesma pasta.
+
+Como usar:
+1. Extraia todos os arquivos desta pasta do ZIP para a pasta do seu projeto, substituindo o index.html pela versão incluída.
+2. Mantenha index.html, style.css, script.js, favicon.ico e favicon.png no mesmo diretório.
+3. Abra o site com o seu servidor habitual.
+4. Caso o ícone antigo continue aparecendo, faça uma atualização forçada (Ctrl+F5) ou limpe o cache do favicon do navegador.
+
+
+NOVAS OPÇÕES EM CONFIGURAÇÕES
+- Para salvar uma alteração de chave TMDB, informe o código de segurança: C1n3via2411.
+- Em Personalização do catálogo, selecione “Visual atual do Cinévia” ou “Netflix Look — desktop” e clique em “Aplicar visualização”.
+- A opção escolhida fica salva no navegador; o visual atual é o padrão na primeira utilização.
+- Nota: o código de segurança no front-end impede alterações casuais, mas não é uma barreira forte contra alguém que inspecione o JavaScript do site. Proteção real exige validação em servidor.
